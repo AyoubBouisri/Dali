@@ -1,0 +1,2 @@
+# Dali
+Chess heuristic AI 
