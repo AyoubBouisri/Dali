@@ -38,7 +38,7 @@ class Game():
         pass
 
     def get_pieces_png(self):
-        piece_order = ['k', 'q', 'b', 'n', 'r', 'p']
+        piece_order = ['k', 'q', 'r', 'n', 'b', 'p']
         image = pygame.image.load('resources/pieces.png').convert_alpha()
 
         img_w, img_h = image.get_size()
@@ -54,7 +54,7 @@ class Game():
                 rect = pygame.Rect(i * piece_w, j * piece_h, piece_w, piece_h)
                 piece_img = pygame.Surface(rect.size).convert_alpha() 
                 piece_img.blit(image,(0,0), rect)
-                piece_dict[piece] = piece_img.convert_alpha()
+                piece_dict[piece] = piece_img
                 
             piece_order = [piece.upper() for piece in piece_order]
 
