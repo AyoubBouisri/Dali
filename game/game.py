@@ -27,9 +27,12 @@ class Game():
     def mouse_released(self, mouse_pos):
         if self.current_piece:
             i, j = mouse_pos[0] // self.square_w, mouse_pos[1] // self.square_w
-            move = self.get_move(self.current_piece, (i,j))    
-            self.board.push(move)
-            self.board_array = self.update_board()
+            move = self.get_move(self.current_piece, (i,j))
+
+            if move in self.board.legal_moves:
+                self.board.push(move)
+                self.board_array = self.update_board()
+
             self.current_piece = None
         
     def mouse_moved(self, mouse_pos):
@@ -72,7 +75,7 @@ class Game():
         pass
 
     def get_pieces_png(self):
-        piece_order = ['k', 'q', 'r', 'n', 'b', 'p']
+        piece_order = ['q', 'k', 'r', 'n', 'b', 'p']
         image = pygame.image.load('resources/pieces.png').convert_alpha()
  
         img_w, img_h = image.get_size()
@@ -93,10 +96,14 @@ class Game():
         return piece_dict
 
     def get_move(self, from_sq, to_sq):
+        if from_sq == to_sq:
+            return None
+
         def to_string(i, j):
             a = 97 # ASCII for 'a'
             return chr(a + i) + str( 8 - j)
         uci = to_string(*from_sq) + to_string(*to_sq)
+        print(uci)
         return chess.Move.from_uci(uci)
             
         
