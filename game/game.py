@@ -25,7 +25,12 @@ class Game():
             self.mouse_pos = mouse_pos
 
     def mouse_released(self, mouse_pos):
-        self.current_piece = None
+        if self.current_piece:
+            i, j = mouse_pos[0] // self.square_w, mouse_pos[1] // self.square_w
+            move = self.get_move(self.current_piece, (i,j))    
+            self.board.push(move)
+            self.board_array = self.update_board()
+            self.current_piece = None
         
     def mouse_moved(self, mouse_pos):
         if self.current_piece:
@@ -55,7 +60,6 @@ class Game():
                         if current_i == i and current_j == j:
                             x = self.mouse_pos[0] - img_size[0] / 2
                             y = self.mouse_pos[1] - img_size[0] / 2
-
                     self.screen.blit(self.pieces_sprites, pygame.Rect(x, y,self.square_w, self.square_w), area=self.pieces_img[c])
 
     def draw_background(self):
@@ -87,6 +91,16 @@ class Game():
         self.pieces_sprites = image
 
         return piece_dict
+
+    def get_move(self, from_sq, to_sq):
+        def to_string(i, j):
+            a = 97 # ASCII for 'a'
+            return chr(a + i) + str( 8 - j)
+        uci = to_string(*from_sq) + to_string(*to_sq)
+        return chess.Move.from_uci(uci)
+            
+        
+
 
 
 
