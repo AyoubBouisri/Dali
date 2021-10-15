@@ -103,7 +103,6 @@ class Game():
             a = 97 # ASCII for 'a'
             return chr(a + i) + str( 8 - j)
         uci = to_string(*from_sq) + to_string(*to_sq)
-        print(uci)
         return chess.Move.from_uci(uci)
             
         
