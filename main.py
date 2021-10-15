@@ -11,7 +11,6 @@ def main():
 
     while running:
         for event in pygame.event.get():
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 game.mouse_pressed(pygame.mouse.get_pos())
 
