@@ -13,8 +13,23 @@ def board_eval(board):
     
 def side_eval(side, board):
     eval = 0
+
+    # Material
     for i in range(0, len(pieces_worth)):
         eval += pieces_worth[i] * len(board.pieces(chess.PIECE_TYPES[i], side))
+        # --- pieces positions
+    
+
+
+    # Kings safety
+
+
+    # activity of the pieces
+
+
+    # pawn structure and space
+
+
     return eval
 
 
