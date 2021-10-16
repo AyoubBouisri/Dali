@@ -1,14 +1,19 @@
 import pygame
 import chess
+from .utils import get_pieces_png, get_move
+from .bot import Dali
+
 
 class Game():
     def __init__(self, w, h):
         self.w, self.h = w, h
         self.screen = pygame.display.set_mode([self.w, self.h])
         self.square_w = w // 8
-        self.pieces_img = self.get_pieces_png()
+        self.pieces_img, self.pieces_sprites = get_pieces_png()
         self.board = chess.Board()
         self.board_array = self.update_board()
+        
+        self.bot = Dali()
 
         self.is_dragging = False
         self.current_piece = None # Piece that the player is dragging
@@ -27,11 +32,14 @@ class Game():
     def mouse_released(self, mouse_pos):
         if self.current_piece:
             i, j = mouse_pos[0] // self.square_w, mouse_pos[1] // self.square_w
-            move = self.get_move(self.current_piece, (i,j))
+            move = get_move(self.current_piece, (i,j))
 
             if move in self.board.legal_moves:
                 self.board.push(move)
+                self.bot.play(self.board)
+
                 self.board_array = self.update_board()
+
 
             self.current_piece = None
         
@@ -71,43 +79,3 @@ class Game():
                 color = (251, 217, 181) if (i + j) % 2 == 0 else (181, 136, 99)
                 pygame.draw.rect(self.screen, color, pygame.Rect(i * self.square_w, j * self.square_w, self.square_w, self.square_w))
 
-    def update(self):
-        pass
-
-    def get_pieces_png(self):
-        piece_order = ['q', 'k', 'r', 'n', 'b', 'p']
-        image = pygame.image.load('resources/pieces.png').convert_alpha()
- 
-        img_w, img_h = image.get_size()
-        piece_w = img_w / len(piece_order)
-        piece_h = img_h / 2
-
-        piece_dict = {}
-        # set up the black pieces 
-        for j in range(0, 2): 
-            for i in range(len(piece_order)):
-                piece = piece_order[i]
-                rect = pygame.Rect(i * piece_w, j * piece_h, piece_w, piece_h)
-                piece_dict[piece] = rect
-            piece_order = [piece.upper() for piece in piece_order]
-
-        self.pieces_sprites = image
-
-        return piece_dict
-
-    def get_move(self, from_sq, to_sq):
-        if from_sq == to_sq:
-            return None
-
-        def to_string(i, j):
-            a = 97 # ASCII for 'a'
-            return chr(a + i) + str( 8 - j)
-        uci = to_string(*from_sq) + to_string(*to_sq)
-        return chess.Move.from_uci(uci)
-            
-        
-
-
-
-
-        

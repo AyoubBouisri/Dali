@@ -25,7 +25,6 @@ def main():
                 # change the value to False, to exit the main loop
                 running = False
 
-        game.update()
         game.draw()
 
 if __name__ == '__main__':
