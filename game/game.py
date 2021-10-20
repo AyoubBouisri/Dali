@@ -1,7 +1,7 @@
 import pygame
 import chess
 from .utils import get_pieces_png, get_move
-from .bot import Dali
+from .dali import Dali
 
 
 class Game():
@@ -36,7 +36,7 @@ class Game():
 
             if move in self.board.legal_moves:
                 self.board.push(move)
-                self.bot.play(self.board)
+                self.bot.play(self.board, move)
 
                 self.board_array = self.update_board()
 

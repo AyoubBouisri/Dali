@@ -2,37 +2,6 @@ import chess
 import pygame
 
 
-pieces_worth = [1, 3, 3, 5, 9, 0]
-
-# Negative for Black 
-# Positive for White - MAJ
-def board_eval(board):
-    white_eval = side_eval(chess.WHITE, board)
-    black_eval = side_eval(chess.BLACK, board)
-    return white_eval - black_eval
-    
-def side_eval(side, board):
-    eval = 0
-
-    # Material
-    for i in range(0, len(pieces_worth)):
-        eval += pieces_worth[i] * len(board.pieces(chess.PIECE_TYPES[i], side))
-        # --- pieces positions
-    
-
-
-    # Kings safety
-
-
-    # activity of the pieces
-
-
-    # pawn structure and space
-
-
-    return eval
-
-
 def get_move(from_sq, to_sq):
     if from_sq == to_sq:
         return None
