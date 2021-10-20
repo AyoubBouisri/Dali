@@ -21,19 +21,20 @@ class Dali():
         evals = []
         for move in board.legal_moves:
             board.push(move)
-            evals.append((
-                self.find_best_move(board, isMax=(not isMax), depth=depth+1)[0],
-                move
-            ))    
+            best_move = self.find_best_move(board, isMax=(not isMax), depth=depth+1)
+            if best_move:
+                evals.append((best_move[0], move))
             board.pop()
 
         return self.get_edge_move(evals, isMax)
 
     def get_edge_move(self, moves, isMax):
-        if isMax:
-            return max(moves, key=lambda t: t[0])
-        else:
-            return min(moves, key=lambda t: t[0])
+        if moves:
+            if isMax:
+                return max(moves, key=lambda t: t[0])
+            else:
+                return min(moves, key=lambda t: t[0])
+        return None
 
     def eval_move(self, board, move, play):
         if play:
