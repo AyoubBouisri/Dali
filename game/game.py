@@ -1,7 +1,6 @@
 import pygame
 import chess
 from .utils import get_pieces_png, get_move
-from .dali import Dali
 
 
 class Game():
@@ -13,8 +12,6 @@ class Game():
         self.board = chess.Board()
         self.board_array = self.update_board()
         
-        self.bot = Dali()
-
         self.is_dragging = False
         self.current_piece = None # Piece that the player is dragging
 
@@ -36,13 +33,8 @@ class Game():
 
             if move in self.board.legal_moves:
                 self.board.push(move)
-
                 self.board_array = self.update_board()
                 self.draw()
-
-                self.bot.play(self.board, move)
-                self.board_array = self.update_board()
-
 
             self.current_piece = None
         
