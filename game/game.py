@@ -36,8 +36,11 @@ class Game():
 
             if move in self.board.legal_moves:
                 self.board.push(move)
-                self.bot.play(self.board, move)
 
+                self.board_array = self.update_board()
+                self.draw()
+
+                self.bot.play(self.board, move)
                 self.board_array = self.update_board()
 
 
