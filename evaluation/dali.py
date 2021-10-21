@@ -14,7 +14,6 @@ class Dali():
 
     # Dali is trying to Minimize
     def find_best_move(self, board, isMax=False, depth=0):
-
         if not board.legal_moves:
             return self.eval(board), board.peek()
 
@@ -40,26 +39,5 @@ class Dali():
                 return min(moves, key=lambda t: t[0])
         return None
 
-    def eval_move(self, board, move):
-        board.push(move)
-        eval = self.eval(board)
-        board.pop()
-        return eval
 
-    def eval(self, board):
-        white_eval = self.side_eval(chess.WHITE, board)
-        black_eval = self.side_eval(chess.BLACK, board)
-        return white_eval - black_eval
 
-    def side_eval(self, side, board):
-        eval = 0
-
-        # Check if the side lost the game
-        if board.is_checkmate and board.turn is side:
-            eval -= 1000
-
-        # Material
-        for i in range(0, len(chess.PIECE_TYPES)):
-            eval += PIECES_WORTH[i] * len(board.pieces(chess.PIECE_TYPES[i], side))
-
-        return eval

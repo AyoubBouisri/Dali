@@ -12,10 +12,10 @@ def main():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                game.mouse_pressed(pygame.mouse.get_pos())
+                game.mouse_pressed(pygame.mouse.get_pos(), pygame.mouse.get_pressed())
 
             if event.type == pygame.MOUSEBUTTONUP:
-                game.mouse_released(pygame.mouse.get_pos())
+                game.mouse_released(pygame.mouse.get_pos(), pygame.mouse.get_pressed())
             
             if event.type == pygame.MOUSEMOTION:
                 game.mouse_moved(pygame.mouse.get_pos())

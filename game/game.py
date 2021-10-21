@@ -1,6 +1,8 @@
 import pygame
 import chess
+from datetime import datetime
 from .utils import get_pieces_png, get_move
+from evaluation.evaluation import find_best_move
 
 
 class Game():
@@ -20,24 +22,41 @@ class Game():
         self.draw_pieces()
         pygame.display.update()
 
-    def mouse_pressed(self, mouse_pos):
-        i, j = mouse_pos[0] // self.square_w, mouse_pos[1] // self.square_w
-        if self.board_array[i][j] != '.':
-            self.current_piece = (i,j)
-            self.mouse_pos = mouse_pos
-
-    def mouse_released(self, mouse_pos):
-        if self.current_piece:
+    def mouse_pressed(self, mouse_pos, mouse_pressed):
+        if mouse_pressed[0]:
             i, j = mouse_pos[0] // self.square_w, mouse_pos[1] // self.square_w
-            move = get_move(self.current_piece, (i,j))
+            if self.board_array[i][j] != '.':
+                self.current_piece = (i,j)
+                self.mouse_pos = mouse_pos
 
-            if move in self.board.legal_moves:
-                self.board.push(move)
-                self.board_array = self.update_board()
-                self.draw()
+    def mouse_released(self, mouse_pos, mouse_pressed):
+        if not mouse_pressed[0]:
+            if self.current_piece:
+                i, j = mouse_pos[0] // self.square_w, mouse_pos[1] // self.square_w
+                move = get_move(self.current_piece, (i,j))
 
-            self.current_piece = None
-        
+                if move in self.board.legal_moves:
+                    self.board.push(move)
+                    self.board_array = self.update_board()
+                    self.draw()
+
+                    self.dali_play()
+                    
+
+        self.current_piece = None
+
+    def dali_play(self):
+        before = datetime.now()
+
+        response_move, nbr_moves, max_depth = find_best_move(self.board, False, 0)
+        self.board.push(response_move[1])
+        self.board_array = self.update_board()
+        self.draw()
+
+        after = datetime.now() 
+        eval_time = after - before
+        print(f"Evaluation time: {eval_time}")
+
     def mouse_moved(self, mouse_pos):
         if self.current_piece:
             self.mouse_pos = mouse_pos
@@ -50,6 +69,7 @@ class Game():
             y = i // 8 
             board_array[x][y] = board_str[i]
         return board_array
+
 
     def draw_pieces(self):
         for i in range(len(self.board_array)):
