@@ -2,7 +2,7 @@ import pygame
 import chess
 from datetime import datetime
 from .utils import get_pieces_png, get_move
-from evaluation.evaluation import find_best_move
+from evaluation.evaluation import Evaluator
 
 
 class Game():
@@ -13,6 +13,7 @@ class Game():
         self.pieces_img, self.pieces_sprites = get_pieces_png()
         self.board = chess.Board()
         self.board_array = self.update_board()
+        self.dali = Evaluator()
         
         self.is_dragging = False
         self.current_piece = None # Piece that the player is dragging
@@ -41,21 +42,13 @@ class Game():
                     self.draw()
 
                     self.dali_play()
-                    
 
         self.current_piece = None
 
     def dali_play(self):
-        before = datetime.now()
-
-        response_move, nbr_moves, max_depth = find_best_move(self.board, False, 0)
-        self.board.push(response_move[1])
+        self.board.push(self.dali.find_best_move(self.board, False))
         self.board_array = self.update_board()
         self.draw()
-
-        after = datetime.now() 
-        eval_time = after - before
-        print(f"Evaluation time: {eval_time}")
 
     def mouse_moved(self, mouse_pos):
         if self.current_piece:
