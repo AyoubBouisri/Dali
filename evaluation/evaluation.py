@@ -2,9 +2,10 @@ import chess
 import time
 import math
 
+
 PIECES_WORTH = [1, 3, 3, 5, 9, 0]
-TIME_LIMIT = 10000 # ms
-MAX_DEPTH = 3
+MAX_TIME = 2000
+MIN_DEPTH = 3
 
 
 class Evaluator():
@@ -19,13 +20,25 @@ class Evaluator():
         self.start_evaluation_time = round(time.time() * 1000)
         self.max_depth_reached = 0
         self.nbr_moves_searched = 0
+        self.reached_time_limit_mid_search = False
 
-        #best_move = self.search_min_max(board, isMax, 0)
+        self.max_depth = MIN_DEPTH
+
         best_move = self.search_alpha_beta(board, isMax, 0, -math.inf, math.inf)
+        while self.current_search_time() < MAX_TIME:
+            self.max_depth += 1
+            previous_move = best_move
+            best_move = self.search_alpha_beta(board, isMax, 0, -math.inf, math.inf)
 
-        print(f"Depth Reached : {self.max_depth_reached}")
-        print(f"Time Searching : {self.get_search_time()}")
-        print(f"Moves Searched : {self.nbr_moves_searched}")
+            if self.reached_time_limit_mid_search:
+                self.max_depth_reached -= 1
+                best_move = previous_move
+
+
+
+        print(f"Eval : {best_move[0]}")
+        print(f"Time Searching : {self.current_search_time()}")
+        print(f"Depth reached : {self.max_depth_reached}")
 
         return best_move[1]
 
@@ -34,7 +47,10 @@ class Evaluator():
         self.max_depth_reached = depth if depth > self.max_depth_reached else self.max_depth_reached
         self.nbr_moves_searched += 1
 
-        if not board.legal_moves or depth >= MAX_DEPTH:
+        if not board.legal_moves or depth >= self.max_depth or self.current_search_time() > MAX_TIME:
+            if self.current_search_time() > MAX_TIME:
+                self.reached_time_limit_mid_search = True
+
             return self.eval_position(board), None
         
         if isMax:
@@ -62,29 +78,8 @@ class Evaluator():
                     break
             return min_value
                 
-    def search_min_max(self, board, isMax, depth):
-        self.max_depth_reached = depth if depth > self.max_depth_reached else self.max_depth_reached
-        self.nbr_moves_searched += 1
-
-        if not board.legal_moves or depth >= MAX_DEPTH:
-            return self.eval_position(board), None
-        
-        moves = []
-        for move in board.legal_moves:
-            board.push(move)
-            best_move = self.search_min_max(board, not isMax, depth + 1)
-            moves.append((best_move[0], move))
-            board.pop()
-
-        return self.get_edge_moves(moves, isMax)
-
-    def get_edge_moves(self, moves, isMax):
-        if isMax:
-            return max(moves, key=lambda t: t[0])
-        else:
-            return min(moves, key=lambda t: t[0])
-
     def order_legal_moves(self, board):
+        # TODO order moves in a more precise manner
         checks = []
         piece_attacks = []
         others = []
@@ -119,7 +114,7 @@ class Evaluator():
         eval = 0
 
         # Check if the side lost the game
-        if board.is_checkmate and board.turn is side:
+        if board.is_checkmate() and board.turn is side:
             eval -= 1000
 
         # Material
@@ -128,13 +123,12 @@ class Evaluator():
 
         return eval
 
-    def get_search_time(self):
+    def current_search_time(self):
         return time.time() * 1000 - self.start_evaluation_time
+
+    def zobrist_hash_from_previous(self, previous_hash, move):
+        pass
 
     def zobrist_hash(self, board):
         pass
-
-    def get_position(self, board):
-        pass
-
 
