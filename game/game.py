@@ -1,6 +1,5 @@
 import pygame
 import chess
-from datetime import datetime
 from .utils import get_pieces_png, get_move
 from evaluation.evaluation import Evaluator
 
@@ -16,7 +15,7 @@ class Game():
         self.dali = Evaluator()
         
         self.is_dragging = False
-        self.current_piece = None # Piece that the player is dragging
+        self.current_piece = None
 
     def draw(self):
         self.draw_background()
@@ -46,7 +45,8 @@ class Game():
         self.current_piece = None
 
     def dali_play(self):
-        self.board.push(self.dali.find_best_move(self.board, False))
+        best_move = self.dali.find_best_move(self.board, False)
+        self.board.push(best_move)
         self.board_array = self.update_board()
         self.draw()
 

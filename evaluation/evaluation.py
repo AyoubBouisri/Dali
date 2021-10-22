@@ -2,8 +2,8 @@ import chess
 import time
 
 PIECES_WORTH = [1, 3, 3, 5, 9, 0]
-TIME_LIMIT = 2000 # ms
-MAX_DEPTH = 5
+TIME_LIMIT = 10000 # ms
+MAX_DEPTH = 3
 
 
 class Evaluator():
@@ -27,12 +27,12 @@ class Evaluator():
 
         return best_move[1]
 
-    def search(self, board, alpha, beta, isMax, depth):
+    def search(self, board, isMax, depth):
 
         self.max_depth_reached = depth if depth > self.max_depth_reached else self.max_depth_reached
         self.nbr_moves_searched += 1
 
-        if not board.legal_moves or self.get_search_time() > TIME_LIMIT or depth >= MAX_DEPTH:
+        if not board.legal_moves or depth >= MAX_DEPTH:
             return self.eval_position(board), None
         
         moves = []
@@ -50,8 +50,26 @@ class Evaluator():
         else:
             return min(moves, key=lambda t: t[0])
 
-    def order_moves(self):
-        pass
+    def order_moves(self, board, moves: list):
+        checks = []
+        piece_attacks = []
+        others = []
+        
+        for move in moves:
+            board.push(move)
+            if board.is_check():
+                checks.append(move)
+            else:
+                is_attacking = False
+                squares_attacked = board.attacks(move.to_square)
+                for square in squares_attacked:
+                    if board.piece_at(square).color is board.turn:
+                        piece_attacks.append(move)
+                        is_attacking = True
+                        break;
+                if not is_attacking:
+                    others.append(move)
+        return checks + piece_attacks + others
 
     def eval_position(self, board):
         white_eval = self.side_eval(chess.WHITE, board)
