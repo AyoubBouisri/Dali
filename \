@@ -132,13 +132,13 @@ class Evaluator():
         new_hash = previous_hash 
 
         if board.piece_at(to):
+            print(haha)
             new_hash ^= self.zobrist_table[to][PIECES_ORDER.index(str(board.piece_at(to)))]
 
         piece_index = PIECES_ORDER.index(str(board.piece_at(fr)))
 
         new_hash ^= self.zobrist_table[to][piece_index]
         new_hash ^= self.zobrist_table[fr][piece_index]
-
         return new_hash
 
     def init_zobrist_table(self):

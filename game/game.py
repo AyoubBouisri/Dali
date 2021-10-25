@@ -45,8 +45,15 @@ class Game():
         self.current_piece = None
 
     def dali_play(self):
+        current_hash = self.dali.zobrist_hash(self.board)
         best_move = self.dali.find_best_move(self.board, False)
+
+        calculated_hash = self.dali.zobrist_hash_from_previous(current_hash, best_move, self.board) 
         self.board.push(best_move)
+
+        new_hash = self.dali.zobrist_hash(self.board)
+        print(new_hash, calculated_hash)
+
         self.board_array = self.update_board()
         self.draw()
 

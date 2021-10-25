@@ -3,9 +3,8 @@ Chess heuristic AI
 
 # TODO 
 
-- [] Transposition table
+- [] Transposition table - Zobrist hashing
 - [] Evaluation Function
 - [] Better move ordering
-- [] Multiprocessing ?
 - [] Opening book
 - [] Endgame algo
