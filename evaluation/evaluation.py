@@ -1,10 +1,13 @@
 import chess
 import time
 import math
+from random import random
 
+# TODO find a better way
+PIECES_ORDER = ['p', 'k', 'q', 'r', 'n', 'b', 'P', 'K', 'Q', 'R', 'N', 'B']
 
 PIECES_WORTH = [1, 3, 3, 5, 9, 0]
-MAX_TIME = 2000
+MAX_TIME = 1000
 MIN_DEPTH = 3
 
 
@@ -15,8 +18,10 @@ class Evaluator():
         self.start_evaluation_time = 0
         self.nbr_moves_searched = 0
         self.max_depth_reached = 0
+        self.zobrist_table = self.init_zobrist_table()
 
     def find_best_move(self, board, isMax):
+        hash = self.zobrist_hash(board)
         self.start_evaluation_time = round(time.time() * 1000)
         self.max_depth_reached = 0
         self.nbr_moves_searched = 0
@@ -35,6 +40,7 @@ class Evaluator():
                 best_move = previous_move
 
 
+        new_hash = self.zobrist_hash_from_previous(hash, best_move[1], board)
 
         print(f"Eval : {best_move[0]}")
         print(f"Time Searching : {self.current_search_time()}")
@@ -126,9 +132,33 @@ class Evaluator():
     def current_search_time(self):
         return time.time() * 1000 - self.start_evaluation_time
 
-    def zobrist_hash_from_previous(self, previous_hash, move):
-        pass
+    def zobrist_hash_from_previous(self, previous_hash, move, board):
+        # TODO 
+        to = move.to_square
+        fr = move.from_square
+
+        print(board.piece_at(to), board.piece_at(fr))
+    
+    def init_zobrist_table(self):
+        N = 1000
+        table = [[0] * 8] * 8
+        for i in range(8):
+            for j in range(8):
+                pieces = []
+                for p in range(12):
+                    pieces.append(round(random() * N))
+                table[i][j] = pieces
+        return table
 
     def zobrist_hash(self, board):
-        pass
+        # TODO probably fix this up with actual algo 
+        hash = 0
+        board_str = str(board).replace(" ", "").replace("\n", "")
+        for i in range(len(board_str)):
+            x = i % 8
+            y = i // 8 
+            if board_str[i] != '.':
+                hash = hash ^ self.zobrist_table[x][y][PIECES_ORDER.index(board_str[i])]
+        return hash
+            
 
